@@ -1,0 +1,38 @@
+JobType = "Normal";
+CPUNumber = 16;
+
+#SMPGranularity=4;
+#wholenodes=true;
+
+Executable = "/usr/bin/mpi-start";
+Arguments = "-t openmpi namd2 lipid_0.conf";
+
+StdOutput = "namd2.out";
+StdError = "namd2.err";
+
+InputSandbox = {"/home/cesini/mpi/lipid_segments/lipid_prologue.sh","/home/cesini/mpi/lipid_segments/lipid_epilogue.py","/home/cesini/mpi/lipid_segments/lipid_0.conf"};
+OutputSandbox = {"namd2.err","namd2.out","prologue.log","epilogue.log"};
+
+Prologue = "lipid_prologue.sh";
+PrologueArguments= "lipid 0";
+Epilogue = "lipid_epilogue.py";
+EpilogueArguments= "lipid 1";    
+#It's important to have 1 not 0 - output is input+1 as naming convention
+
+Requirements =
+ Member("MPI-START", other.GlueHostApplicationSoftwareRunTimeEnvironment)
+  && Member("OPENMPI", other.GlueHostApplicationSoftwareRunTimeEnvironment)
+  && (other.GlueCEUniqueID=="emi-ce01.scope.unina.it:8443/cream-pbs-hpc")
+#
+#  && (other.GlueCEUniqueID=="emi-ce.pr.infn.it:8443/cream-pbs-parallel")
+
+  ;
+
+
+RetryCount = 0;
+ShallowRetryCount = 0;
+
+PerusalFileEnable = true;
+PerusalTimeInterval = 300;
+
+MyProxyServer="myproxy.cnaf.infn.it";
